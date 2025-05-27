@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, signal } from '@angular/core';
+import { Component, computed, effect, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
 interface Task {
@@ -18,14 +18,25 @@ export class AppComponent {
   title = 'signals-example';
 
   name = signal('Sebastian Signals');
-
+  age = signal(29);
   tasks = signal<Task[]>([
     { name: 'Task 1', isCompleted: false },
     { name: 'Task 2', isCompleted: true },
     { name: 'Task 3', isCompleted: false },
   ]);
 
-  age = signal(29);
+  constructor() {
+    effect(() => {
+      console.log('Name changed:', this.name());
+      console.log('Age changed:', this.age());
+      console.log('Tasks changed:', this.tasks());
+      if (this.tasks().length > 5) {
+        alert('You have more than 5 tasks!');
+      }
+    });
+  }
+
+  taskLength = computed(() => this.tasks().length);
 
   changeName() {
     this.name.set('Sebastian Signals Updated');
